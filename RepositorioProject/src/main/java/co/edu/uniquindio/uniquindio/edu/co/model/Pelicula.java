@@ -12,26 +12,6 @@ public class Pelicula implements Gestionable {
     public Pelicula(String codigo, String nombre, GeneroPelicula genero,
                     int duracion, ClasificacionEdad clasificacion) {
 
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El código de la película es obligatorio.");
-        }
-
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la película es obligatorio.");
-        }
-
-        if (genero == null) {
-            throw new IllegalArgumentException("Debe seleccionar un género.");
-        }
-
-        if (duracion <= 0) {
-            throw new IllegalArgumentException("La duración debe ser mayor que cero.");
-        }
-
-        if (clasificacion == null) {
-            throw new IllegalArgumentException("Debe seleccionar una clasificación.");
-        }
-
         this.codigo = codigo;
         this.nombre = nombre;
         this.genero = genero;
@@ -65,40 +45,35 @@ public class Pelicula implements Gestionable {
     }
 
     public void setNombre(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la película es obligatorio.");
-        }
-
         this.nombre = nombre;
     }
 
     public void setGenero(GeneroPelicula genero) {
-        if (genero == null) {
-            throw new IllegalArgumentException("Debe seleccionar un género.");
-        }
-
         this.genero = genero;
     }
 
     public void setDuracion(int duracion) {
-        if (duracion <= 0) {
-            throw new IllegalArgumentException("La duración debe ser mayor que cero.");
-        }
-
         this.duracion = duracion;
     }
 
     public void setClasificacion(ClasificacionEdad clasificacion) {
-        if (clasificacion == null) {
-            throw new IllegalArgumentException("Debe seleccionar una clasificación.");
+        this.clasificacion = clasificacion;
+    }
+
+    public boolean estaDisponible() {
+        boolean resultado = false;
+
+        if (estado == EstadoPelicula.DISPONIBLE) {
+            resultado = true;
         }
 
-        this.clasificacion = clasificacion;
+        return resultado;
     }
 
     @Override
     public void modificar() {
-        estado = EstadoPelicula.DISPONIBLE;
+        // La película conserva su estado actual.
+        // Sus datos se pueden cambiar mediante los métodos set.
     }
 
     @Override

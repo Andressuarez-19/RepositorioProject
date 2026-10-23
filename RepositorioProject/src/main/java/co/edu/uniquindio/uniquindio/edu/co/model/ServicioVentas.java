@@ -8,7 +8,7 @@ public class ServicioVentas {
     private List<Venta> listaVentas;
 
     public ServicioVentas() {
-        listaVentas = new ArrayList<>();
+        listaVentas = new ArrayList<Venta>();
     }
 
     public List<Venta> getListaVentas() {
@@ -19,10 +19,11 @@ public class ServicioVentas {
         boolean disponible = true;
 
         for (Venta venta : listaVentas) {
-            if (venta.estaActiva()
-                    && venta.getFuncion().getCodigo().equalsIgnoreCase(funcion.getCodigo())
-                    && venta.getAsiento().getCodigo().equalsIgnoreCase(asiento.getCodigo())) {
-                disponible = false;
+            if (venta.estaActiva()) {
+                if (venta.getFuncion().getCodigo().equalsIgnoreCase(funcion.getCodigo())
+                        && venta.getAsiento().getCodigo().equalsIgnoreCase(asiento.getCodigo())) {
+                    disponible = false;
+                }
             }
         }
 
@@ -30,25 +31,20 @@ public class ServicioVentas {
     }
 
     public void registrarVenta(Venta venta) {
-        if (venta == null) {
-            throw new IllegalArgumentException("La venta no puede ser nula.");
-        }
+        boolean existe = false;
 
-        if (!venta.getFuncion().estaProgramada()) {
-            throw new IllegalArgumentException("La función no está disponible para la venta.");
-        }
+        if (venta != null) {
+            for (Venta ventaRegistrada : listaVentas) {
+                if (ventaRegistrada.getCodigo().equalsIgnoreCase(venta.getCodigo())) {
+                    existe = true;
+                }
+            }
 
-        if (!estaDisponible(venta.getFuncion(), venta.getAsiento())) {
-            throw new IllegalArgumentException("El asiento ya está ocupado para esta función.");
-        }
-
-        for (Venta ventaRegistrada : listaVentas) {
-            if (ventaRegistrada.getCodigo().equalsIgnoreCase(venta.getCodigo())) {
-                throw new IllegalArgumentException("Ya existe una venta con ese código.");
+            if (!existe && venta.getFuncion().estaProgramada()
+                    && estaDisponible(venta.getFuncion(), venta.getAsiento())) {
+                listaVentas.add(venta);
             }
         }
-
-        listaVentas.add(venta);
     }
 
     public Venta buscarVenta(String codigo) {
@@ -68,15 +64,11 @@ public class ServicioVentas {
     public void cancelarVenta(String codigo) {
         Venta venta = buscarVenta(codigo);
 
-        if (venta == null) {
-            throw new IllegalArgumentException("No existe una venta con ese código.");
+        if (venta != null) {
+            if (venta.estaActiva()) {
+                venta.cancelar();
+            }
         }
-
-        if (!venta.estaActiva()) {
-            throw new IllegalArgumentException("La venta ya está cancelada.");
-        }
-
-        venta.cancelar();
     }
 
     public int contarVentasActivas() {
@@ -107,10 +99,11 @@ public class ServicioVentas {
         String informacion = "";
 
         for (Venta venta : listaVentas) {
-            informacion = informacion + venta.generarInformacionVenta() + "\n\n";
+            informacion = informacion + venta.generarInformacionVenta()
+                    + "\n-------------------------\n";
         }
 
-        if (listaVentas.isEmpty()) {
+        if (listaVentas.size() == 0) {
             informacion = "No hay ventas registradas.";
         }
 
@@ -119,14 +112,17 @@ public class ServicioVentas {
 
     public String consultarVentasActivas() {
         String informacion = "";
+        int cantidad = 0;
 
         for (Venta venta : listaVentas) {
             if (venta.estaActiva()) {
-                informacion = informacion + venta.generarInformacionVenta() + "\n\n";
+                informacion = informacion + venta.generarInformacionVenta()
+                        + "\n-------------------------\n";
+                cantidad++;
             }
         }
 
-        if (informacion.isEmpty()) {
+        if (cantidad == 0) {
             informacion = "No hay ventas activas.";
         }
 

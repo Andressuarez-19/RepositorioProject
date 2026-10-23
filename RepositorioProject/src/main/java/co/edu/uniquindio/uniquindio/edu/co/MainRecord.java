@@ -28,14 +28,16 @@ public class MainRecord {
                 ClasificacionEdad.MAYORES_12
         );
 
-        Sala sala1 = new Sala(
-                "1",
-                "Sala principal"
-        );
+        Sala sala1 = new Sala("1", "Sala principal");
+        Sala sala2 = new Sala("2", "Sala VIP");
+        Sala sala3 = new Sala("3", "Sala 3D");
 
         cine.registrarPelicula(pelicula1);
         cine.registrarPelicula(pelicula2);
+
         cine.registrarSala(sala1);
+        cine.registrarSala(sala2);
+        cine.registrarSala(sala3);
 
         return cine;
     }

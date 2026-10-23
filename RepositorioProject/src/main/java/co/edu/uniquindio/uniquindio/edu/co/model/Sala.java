@@ -12,44 +12,13 @@ public class Sala implements Gestionable {
     private List<Asiento> listaAsientos;
 
     public Sala(String codigo, String nombre) {
-
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El código de la sala es obligatorio.");
-        }
-
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la sala es obligatorio.");
-        }
-
         this.codigo = codigo;
         this.nombre = nombre;
         this.capacidad = 9;
         this.estado = EstadoSala.DISPONIBLE;
-        this.listaAsientos = new ArrayList<>();
+        this.listaAsientos = new ArrayList<Asiento>();
 
         crearAsientos();
-    }
-
-    private void crearAsientos() {
-
-        String[] filas = {"A", "B", "C"};
-
-        for (int i = 0; i < filas.length; i++) {
-
-            for (int j = 1; j <= 3; j++) {
-
-                String codigoAsiento = filas[i] + j;
-                String fila = filas[i];
-
-                Asiento asiento = new Asiento(
-                        codigoAsiento,
-                        fila,
-                        j
-                );
-
-                listaAsientos.add(asiento);
-            }
-        }
     }
 
     public String getCodigo() {
@@ -72,62 +41,76 @@ public class Sala implements Gestionable {
         return listaAsientos;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void crearAsientos() {
+        String[] filas = {"A", "B", "C"};
+
+        for (int i = 0; i < filas.length; i++) {
+            for (int j = 1; j <= 3; j++) {
+                String codigoAsiento = filas[i] + j;
+                String fila = filas[i];
+
+                Asiento asiento = new Asiento(
+                        codigoAsiento, fila, j);
+
+                listaAsientos.add(asiento);
+            }
+        }
+    }
+
     public Asiento buscarAsiento(String codigo) {
+        Asiento resultado = null;
 
-        Asiento asientoEncontrado = null;
-
-        for (Asiento asiento : listaAsientos) {
-
-            if (asiento.getCodigo().equalsIgnoreCase(codigo)) {
-                asientoEncontrado = asiento;
+        if (codigo != null) {
+            for (Asiento asiento : listaAsientos) {
+                if (asiento.getCodigo().equalsIgnoreCase(codigo)) {
+                    resultado = asiento;
+                }
             }
         }
 
-        return asientoEncontrado;
+        return resultado;
     }
 
     public int contarAsientosDisponibles() {
-
-        int disponibles = 0;
+        int cantidad = 0;
 
         for (Asiento asiento : listaAsientos) {
-
             if (asiento.estaDisponible()) {
-                disponibles++;
+                cantidad++;
             }
         }
 
-        return disponibles;
+        return cantidad;
     }
 
     public int contarAsientosOcupados() {
-
-        int ocupados = 0;
+        int cantidad = 0;
 
         for (Asiento asiento : listaAsientos) {
-
             if (!asiento.estaDisponible()) {
-                ocupados++;
+                cantidad++;
             }
         }
 
-        return ocupados;
+        return cantidad;
     }
 
     public boolean estaDisponible() {
-
-        boolean disponible = false;
+        boolean resultado = false;
 
         if (estado == EstadoSala.DISPONIBLE) {
-            disponible = true;
+            resultado = true;
         }
 
-        return disponible;
+        return resultado;
     }
 
     @Override
     public void modificar() {
-
         if (estado == EstadoSala.DISPONIBLE) {
             estado = EstadoSala.FUERA_DE_SERVICIO;
         } else {
@@ -142,7 +125,6 @@ public class Sala implements Gestionable {
 
     @Override
     public String consultarInformacion() {
-
         String informacion = "Código: " + codigo
                 + "\nNombre: " + nombre
                 + "\nCapacidad: " + capacidad

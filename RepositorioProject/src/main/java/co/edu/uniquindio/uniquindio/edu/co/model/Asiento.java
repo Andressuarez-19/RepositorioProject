@@ -8,19 +8,6 @@ public class Asiento {
     private EstadoAsiento estado;
 
     public Asiento(String codigo, String fila, int numero) {
-
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El código del asiento es obligatorio.");
-        }
-
-        if (fila == null || fila.trim().isEmpty()) {
-            throw new IllegalArgumentException("La fila es obligatoria.");
-        }
-
-        if (numero <= 0) {
-            throw new IllegalArgumentException("El número debe ser mayor que cero.");
-        }
-
         this.codigo = codigo;
         this.fila = fila;
         this.numero = numero;
@@ -43,35 +30,33 @@ public class Asiento {
         return estado;
     }
 
-    public boolean estaDisponible() {
+    public void setEstado(EstadoAsiento estado) {
+        this.estado = estado;
+    }
 
-        boolean disponible = false;
+    public boolean estaDisponible() {
+        boolean resultado = false;
 
         if (estado == EstadoAsiento.DISPONIBLE) {
-            disponible = true;
+            resultado = true;
         }
 
-        return disponible;
+        return resultado;
     }
 
     public void ocupar() {
-
         if (estado == EstadoAsiento.DISPONIBLE) {
             estado = EstadoAsiento.OCUPADO;
-        } else {
-            throw new IllegalArgumentException("El asiento ya está ocupado.");
         }
     }
 
     public void liberar() {
-
         if (estado == EstadoAsiento.OCUPADO) {
             estado = EstadoAsiento.DISPONIBLE;
         }
     }
 
     public String consultarEstado() {
-
         String resultado = "";
 
         if (estado == EstadoAsiento.DISPONIBLE) {
@@ -84,7 +69,6 @@ public class Asiento {
     }
 
     public String consultarInformacion() {
-
         String informacion = "Código: " + codigo
                 + "\nFila: " + fila
                 + "\nNúmero: " + numero

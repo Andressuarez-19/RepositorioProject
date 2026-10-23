@@ -13,30 +13,21 @@ public class Cine {
     private List<Sala> listaSalas;
     private List<Funcion> listaFunciones;
     private List<Cliente> listaClientes;
+    private List<Operario> listaOperarios;
+
     private ServicioVentas servicioVentas;
 
     public Cine(String nombre, String nit, String direccion) {
-
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del cine es obligatorio.");
-        }
-
-        if (nit == null || nit.trim().isEmpty()) {
-            throw new IllegalArgumentException("El NIT es obligatorio.");
-        }
-
-        if (direccion == null || direccion.trim().isEmpty()) {
-            throw new IllegalArgumentException("La dirección es obligatoria.");
-        }
-
         this.nombre = nombre;
         this.nit = nit;
         this.direccion = direccion;
 
-        listaPeliculas = new ArrayList<>();
-        listaSalas = new ArrayList<>();
-        listaFunciones = new ArrayList<>();
-        listaClientes = new ArrayList<>();
+        listaPeliculas = new ArrayList<Pelicula>();
+        listaSalas = new ArrayList<Sala>();
+        listaFunciones = new ArrayList<Funcion>();
+        listaClientes = new ArrayList<Cliente>();
+        listaOperarios = new ArrayList<Operario>();
+
         servicioVentas = new ServicioVentas();
     }
 
@@ -68,72 +59,115 @@ public class Cine {
         return listaClientes;
     }
 
+    public List<Operario> getListaOperarios() {
+        return listaOperarios;
+    }
+
     public ServicioVentas getServicioVentas() {
         return servicioVentas;
     }
 
-    public void registrarPelicula(Pelicula pelicula) {
-        if (pelicula == null) {
-            throw new IllegalArgumentException("La película no puede ser nula.");
-        }
+    public boolean registrarPelicula(Pelicula pelicula) {
+        boolean existe = false;
 
-        if (buscarPelicula(pelicula.getCodigo()) != null) {
-            throw new IllegalArgumentException("Ya existe una película con ese código.");
-        }
+        if (pelicula != null) {
+            for (Pelicula peliculaRegistrada : listaPeliculas) {
+                if (peliculaRegistrada.getCodigo()
+                        .equalsIgnoreCase(pelicula.getCodigo())) {
+                    existe = true;
+                }
+            }
 
-        listaPeliculas.add(pelicula);
+            if (!existe) {
+                listaPeliculas.add(pelicula);
+            }
+        }
+        return existe;
     }
 
     public void registrarSala(Sala sala) {
-        if (sala == null) {
-            throw new IllegalArgumentException("La sala no puede ser nula.");
-        }
+        boolean existe = false;
 
-        if (buscarSala(sala.getCodigo()) != null) {
-            throw new IllegalArgumentException("Ya existe una sala con ese código.");
-        }
+        if (sala != null) {
+            for (Sala salaRegistrada : listaSalas) {
+                if (salaRegistrada.getCodigo()
+                        .equalsIgnoreCase(sala.getCodigo())) {
+                    existe = true;
+                }
+            }
 
-        listaSalas.add(sala);
+            if (!existe) {
+                listaSalas.add(sala);
+            }
+        }
     }
 
-    public void registrarFuncion(Funcion funcion) {
-        if (funcion == null) {
-            throw new IllegalArgumentException("La función no puede ser nula.");
-        }
+    public boolean registrarFuncion(Funcion funcion) {
+        boolean existe = false;
+        boolean peliculaRegistrada = false;
+        boolean salaRegistrada = false;
 
-        if (buscarFuncion(funcion.getCodigo()) != null) {
-            throw new IllegalArgumentException("Ya existe una función con ese código.");
-        }
+        if (funcion != null) {
+            for (Funcion funcionRegistrada : listaFunciones) {
+                if (funcionRegistrada.getCodigo()
+                        .equalsIgnoreCase(funcion.getCodigo())) {
+                    existe = true;
+                }
+            }
 
-        if (!listaPeliculas.contains(funcion.getPelicula())) {
-            throw new IllegalArgumentException("La película no está registrada en el cine.");
-        }
+            for (Pelicula pelicula : listaPeliculas) {
+                if (pelicula == funcion.getPelicula()
+                        && pelicula.estaDisponible()) {
+                    peliculaRegistrada = true;
+                }
+            }
 
-        if (!listaSalas.contains(funcion.getSala())) {
-            throw new IllegalArgumentException("La sala no está registrada en el cine.");
-        }
+            for (Sala sala : listaSalas) {
+                if (sala == funcion.getSala() && sala.estaDisponible()) {
+                    salaRegistrada = true;
+                }
+            }
 
-        if (funcion.getPelicula().getEstado() != EstadoPelicula.DISPONIBLE) {
-            throw new IllegalArgumentException("La película no está disponible.");
+            if (!existe && peliculaRegistrada && salaRegistrada) {
+                listaFunciones.add(funcion);
+            }
         }
-
-        if (!funcion.getSala().estaDisponible()) {
-            throw new IllegalArgumentException("La sala no está disponible.");
-        }
-
-        listaFunciones.add(funcion);
+        return existe;
     }
 
-    public void registrarCliente(Cliente cliente) {
-        if (cliente == null) {
-            throw new IllegalArgumentException("El cliente no puede ser nulo.");
-        }
+    public boolean registrarCliente(Cliente cliente) {
+        boolean existe = false;
 
-        if (buscarCliente(cliente.getIdentificacion()) != null) {
-            throw new IllegalArgumentException("Ya existe un cliente con esa identificación.");
-        }
+        if (cliente != null) {
+            for (Cliente clienteRegistrado : listaClientes) {
+                if (clienteRegistrado.getIdentificacion()
+                        .equalsIgnoreCase(cliente.getIdentificacion())) {
+                    existe = true;
+                }
+            }
 
-        listaClientes.add(cliente);
+            if (!existe) {
+                listaClientes.add(cliente);
+            }
+        }
+        return existe;
+    }
+
+    public void registrarOperario(Operario operario) {
+        boolean existe = false;
+
+        if (operario != null) {
+            for (Operario operarioRegistrado : listaOperarios) {
+                if (operarioRegistrado.getCodigo()
+                        .equalsIgnoreCase(operario.getCodigo())) {
+                    existe = true;
+                }
+            }
+
+            if (!existe) {
+                listaOperarios.add(operario);
+            }
+        }
     }
 
     public Pelicula buscarPelicula(String codigo) {
@@ -183,7 +217,8 @@ public class Cine {
 
         if (identificacion != null) {
             for (Cliente cliente : listaClientes) {
-                if (cliente.getIdentificacion().equalsIgnoreCase(identificacion)) {
+                if (cliente.getIdentificacion()
+                        .equalsIgnoreCase(identificacion)) {
                     resultado = cliente;
                 }
             }
@@ -194,6 +229,7 @@ public class Cine {
 
     public Venta buscarVenta(String codigo) {
         Venta resultado = servicioVentas.buscarVenta(codigo);
+
         return resultado;
     }
 
@@ -201,10 +237,11 @@ public class Cine {
         String informacion = "";
 
         for (Pelicula pelicula : listaPeliculas) {
-            informacion = informacion + pelicula.consultarInformacion() + "\n\n";
+            informacion = informacion + pelicula.consultarInformacion()
+                    + "\n-------------------------\n";
         }
 
-        if (listaPeliculas.isEmpty()) {
+        if (listaPeliculas.size() == 0) {
             informacion = "No hay películas registradas.";
         }
 
@@ -215,10 +252,11 @@ public class Cine {
         String informacion = "";
 
         for (Sala sala : listaSalas) {
-            informacion = informacion + sala.consultarInformacion() + "\n\n";
+            informacion = informacion + sala.consultarInformacion()
+                    + "\n-------------------------\n";
         }
 
-        if (listaSalas.isEmpty()) {
+        if (listaSalas.size() == 0) {
             informacion = "No hay salas registradas.";
         }
 
@@ -229,12 +267,11 @@ public class Cine {
         String informacion = "";
 
         for (Funcion funcion : listaFunciones) {
-            if (funcion.estaProgramada()) {
-                informacion = informacion + funcion.consultarInformacion() + "\n\n";
-            }
+            informacion = informacion + funcion.consultarInformacion()
+                    + "\n-------------------------\n";
         }
 
-        if (informacion.isEmpty()) {
+        if (listaFunciones.size() == 0) {
             informacion = "No hay funciones programadas.";
         }
 
@@ -245,10 +282,11 @@ public class Cine {
         String informacion = "";
 
         for (Cliente cliente : listaClientes) {
-            informacion = informacion + cliente.consultarInformacion() + "\n\n";
+            informacion = informacion + cliente.consultarInformacion()
+                    + "\n-------------------------\n";
         }
 
-        if (listaClientes.isEmpty()) {
+        if (listaClientes.size() == 0) {
             informacion = "No hay clientes registrados.";
         }
 
@@ -256,15 +294,13 @@ public class Cine {
     }
 
     public String consultarInformacion() {
-        String informacion = "Cine: " + nombre
+        String informacion = "CINE: " + nombre
                 + "\nNIT: " + nit
                 + "\nDirección: " + direccion
                 + "\nPelículas registradas: " + listaPeliculas.size()
                 + "\nSalas registradas: " + listaSalas.size()
-                + "\nFunciones registradas: " + listaFunciones.size()
-                + "\nClientes registrados: " + listaClientes.size()
-                + "\nVentas activas: " + servicioVentas.contarVentasActivas()
-                + "\nIngresos: $" + servicioVentas.calcularIngresos();
+                + "\nFunciones programadas: " + listaFunciones.size()
+                + "\nClientes registrados: " + listaClientes.size();
 
         return informacion;
     }

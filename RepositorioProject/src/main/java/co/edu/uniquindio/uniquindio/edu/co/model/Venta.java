@@ -6,38 +6,16 @@ public class Venta implements Vendible {
     private Cliente cliente;
     private Funcion funcion;
     private Asiento asiento;
-    private TipoEntrada tipoEntrada;
     private double valor;
     private EstadoVenta estado;
 
     public Venta(String codigo, Cliente cliente, Funcion funcion,
-                 Asiento asiento, TipoEntrada tipoEntrada) {
-
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El código de la venta es obligatorio.");
-        }
-
-        if (cliente == null) {
-            throw new IllegalArgumentException("El cliente es obligatorio.");
-        }
-
-        if (funcion == null) {
-            throw new IllegalArgumentException("La función es obligatoria.");
-        }
-
-        if (asiento == null) {
-            throw new IllegalArgumentException("El asiento es obligatorio.");
-        }
-
-        if (tipoEntrada == null) {
-            throw new IllegalArgumentException("El tipo de entrada es obligatorio.");
-        }
+                 Asiento asiento) {
 
         this.codigo = codigo;
         this.cliente = cliente;
         this.funcion = funcion;
         this.asiento = asiento;
-        this.tipoEntrada = tipoEntrada;
         this.valor = calcularValor();
         this.estado = EstadoVenta.ACTIVA;
     }
@@ -58,10 +36,6 @@ public class Venta implements Vendible {
         return asiento;
     }
 
-    public TipoEntrada getTipoEntrada() {
-        return tipoEntrada;
-    }
-
     public double getValor() {
         return valor;
     }
@@ -77,22 +51,29 @@ public class Venta implements Vendible {
     }
 
     public boolean estaActiva() {
-        boolean resultado = estado == EstadoVenta.ACTIVA;
+        boolean resultado = false;
+
+        if (estado == EstadoVenta.ACTIVA) {
+            resultado = true;
+        }
+
         return resultado;
     }
 
     @Override
     public double calcularValor() {
-        double resultado = funcion.getValorBase();
+        double resultado = 0;
 
-        if (tipoEntrada == TipoEntrada.GENERAL) {
-            resultado = resultado + Tarifas.GENERAL.getValor();
-        } else if (tipoEntrada == TipoEntrada.ESTUDIANTE) {
-            resultado = resultado + Tarifas.ESTUDIANTE.getValor();
-        } else if (tipoEntrada == TipoEntrada.NINO) {
-            resultado = resultado + Tarifas.NINO.getValor();
-        } else if (tipoEntrada == TipoEntrada.ADULTO_MAYOR) {
-            resultado = resultado + Tarifas.ADULTO_MAYOR.getValor();
+        if (cliente != null) {
+            if (cliente.getTipoCliente() == TipoCliente.GENERAL) {
+                resultado = Tarifas.GENERAL.getValor();
+            } else if (cliente.getTipoCliente() == TipoCliente.ESTUDIANTE) {
+                resultado = Tarifas.ESTUDIANTE.getValor();
+            } else if (cliente.getTipoCliente() == TipoCliente.NINO) {
+                resultado = Tarifas.NINO.getValor();
+            } else if (cliente.getTipoCliente() == TipoCliente.ADULTO_MAYOR) {
+                resultado = Tarifas.ADULTO_MAYOR.getValor();
+            }
         }
 
         return resultado;
@@ -102,20 +83,16 @@ public class Venta implements Vendible {
     public String generarInformacionVenta() {
         String informacion = "Código de venta: " + codigo
                 + "\nCliente: " + cliente.getNombre()
+                + "\nTipo de cliente: " + cliente.getTipoCliente()
                 + "\nPelícula: " + funcion.getPelicula().getNombre()
                 + "\nFunción: " + funcion.getCodigo()
                 + "\nFecha: " + funcion.getFecha()
                 + "\nHora: " + funcion.getHora()
+                + "\nSala: " + funcion.getSala().getNombre()
                 + "\nAsiento: " + asiento.getCodigo()
-                + "\nTipo de entrada: " + tipoEntrada
-                + "\nValor: $" + valor
-                + "\nEstado: " + estado;
+                + "\nValor de la boleta: $" + valor
+                + "\nEstado de la venta: " + estado;
 
-        return informacion;
-    }
-
-    public String consultarInformacion() {
-        String informacion = generarInformacionVenta();
         return informacion;
     }
 }

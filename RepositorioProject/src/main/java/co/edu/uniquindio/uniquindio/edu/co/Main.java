@@ -1,7 +1,6 @@
 package uniquindio.edu.co;
 
 import uniquindio.edu.co.model.*;
-
 import javax.swing.JOptionPane;
 
 public class Main {
@@ -11,449 +10,466 @@ public class Main {
         Cine cine = MainRecord.crearCine();
         ServiciosReportes reportes = new ServiciosReportes(cine);
 
-        String opcion = "";
+        int opcion = 0;
 
-        while (!opcion.equals("10")) {
+        while (opcion != 12) {
 
-            opcion = JOptionPane.showInputDialog(
-                    "CINEMAUQ - CINE UNIVERSITARIO"
-                            + "\n\n1. Consultar películas"
-                            + "\n2. Registrar película"
-                            + "\n3. Registrar cliente"
-                            + "\n4. Programar función"
-                            + "\n5. Consultar funciones"
-                            + "\n6. Vender entrada"
-                            + "\n7. Cancelar venta"
-                            + "\n8. Consultar disponibilidad"
-                            + "\n9. Consultar reportes"
-                            + "\n10. Salir"
-                            + "\n\nSeleccione una opción:"
-            );
+            opcion = Integer.parseInt(JOptionPane.showInputDialog(
+                    "CINEMAUQ\n\n"
+                            + "1. Consultar películas\n"
+                            + "2. Registrar película\n"
+                            + "3. Registrar cliente\n"
+                            + "4. Programar función\n"
+                            + "5. Consultar funciones\n"
+                            + "6. Vender entrada\n"
+                            + "7. Cancelar venta\n"
+                            + "8. Consultar disponibilidad\n"
+                            + "9. Consultar reportes\n"
+                            + "10. Modificar fecha y hora de función\n"
+                            + "11. Cancelar función\n"
+                            + "12. Salir\n\n"
+                            + "Seleccione una opción:"
+            ));
 
-            if (opcion == null) {
-                opcion = "10";
-            } else if (opcion.equals("1")) {
-                JOptionPane.showMessageDialog(
-                        null, cine.consultarPeliculas());
+            switch (opcion) {
+                case 1:
+                    consultarPeliculas(cine);
+                    break;
 
-            } else if (opcion.equals("2")) {
-                registrarPelicula(cine);
+                case 2:
+                    registrarPelicula(cine);
+                    break;
 
-            } else if (opcion.equals("3")) {
-                registrarCliente(cine);
+                case 3:
+                    registrarCliente(cine);
+                    break;
 
-            } else if (opcion.equals("4")) {
-                programarFuncion(cine);
+                case 4:
+                    programarFuncion(cine);
+                    break;
 
-            } else if (opcion.equals("5")) {
-                JOptionPane.showMessageDialog(
-                        null, cine.consultarFunciones());
+                case 5:
+                    consultarFunciones(cine);
+                    break;
 
-            } else if (opcion.equals("6")) {
-                venderEntrada(cine);
+                case 6:
+                    venderEntrada(cine);
+                    break;
 
-            } else if (opcion.equals("7")) {
-                cancelarVenta(cine);
+                case 7:
+                    cancelarVenta(cine);
+                    break;
 
-            } else if (opcion.equals("8")) {
-                consultarDisponibilidad(cine, reportes);
+                case 8:
+                    consultarDisponibilidad(cine, reportes);
+                    break;
 
-            } else if (opcion.equals("9")) {
-                consultarReportes(reportes);
+                case 9:
+                    consultarReportes(reportes);
+                    break;
 
-            } else if (!opcion.equals("10")) {
-                JOptionPane.showMessageDialog(
-                        null, "Seleccione una opción válida.");
+                case 10:
+                    modificarFuncion(cine);
+                    break;
+
+                case 11:
+                    cancelarFuncion(cine);
+                    break;
+
+                case 12:
+                    JOptionPane.showMessageDialog(null,
+                            "Gracias por utilizar CINEMAUQ.");
+                    break;
+
+                default:
+                    JOptionPane.showMessageDialog(null,
+                            "Opción no válida.");
             }
         }
+    }
 
-        JOptionPane.showMessageDialog(
-                null, "Gracias por utilizar CINEMAUQ.");
+    public static void consultarPeliculas(Cine cine) {
+
+        JOptionPane.showMessageDialog(null,
+                cine.consultarPeliculas());
     }
 
     public static void registrarPelicula(Cine cine) {
-        try {
-            String codigo = JOptionPane.showInputDialog(
-                    "Código de la película:");
 
-            if (codigo == null) {
-                return;
-            }
+        String codigo = JOptionPane.showInputDialog(
+                "Ingrese el código de la película:");
 
-            String nombre = JOptionPane.showInputDialog(
-                    "Nombre de la película:");
+        if (codigo == null || codigo.equals("")) {
+            return;
+        }
 
-            if (nombre == null) {
-                return;
-            }
+        if (cine.buscarPelicula(codigo) != null) {
+            JOptionPane.showMessageDialog(null,
+                    "Ya existe una película con ese código.");
+            return;
+        }
 
-            String generoTexto = JOptionPane.showInputDialog(
-                    "Género:"
-                            + "\n1. Acción"
-                            + "\n2. Comedia"
-                            + "\n3. Drama"
-                            + "\n4. Terror"
-                            + "\n5. Animación");
+        String nombre = JOptionPane.showInputDialog(
+                "Ingrese el nombre de la película:");
 
-            if (generoTexto == null) {
-                return;
-            }
+        if (nombre == null || nombre.equals("")) {
+            return;
+        }
 
-            GeneroPelicula genero;
+        String generoTexto = JOptionPane.showInputDialog(
+                "Seleccione el género:\n"
+                        + "1. Acción\n"
+                        + "2. Comedia\n"
+                        + "3. Drama\n"
+                        + "4. Terror\n"
+                        + "5. Animación");
 
-            if (generoTexto.equals("1")) {
-                genero = GeneroPelicula.ACCION;
-            } else if (generoTexto.equals("2")) {
-                genero = GeneroPelicula.COMEDIA;
-            } else if (generoTexto.equals("3")) {
-                genero = GeneroPelicula.DRAMA;
-            } else if (generoTexto.equals("4")) {
-                genero = GeneroPelicula.TERROR;
-            } else if (generoTexto.equals("5")) {
-                genero = GeneroPelicula.ANIMACION;
-            } else {
-                throw new IllegalArgumentException(
-                        "Género no válido.");
-            }
+        if (generoTexto == null) {
+            return;
+        }
 
-            String duracionTexto = JOptionPane.showInputDialog(
-                    "Duración en minutos:");
+        GeneroPelicula genero = null;
 
-            if (duracionTexto == null) {
-                return;
-            }
+        if (generoTexto.equals("1")) {
+            genero = GeneroPelicula.ACCION;
+        } else if (generoTexto.equals("2")) {
+            genero = GeneroPelicula.COMEDIA;
+        } else if (generoTexto.equals("3")) {
+            genero = GeneroPelicula.DRAMA;
+        } else if (generoTexto.equals("4")) {
+            genero = GeneroPelicula.TERROR;
+        } else if (generoTexto.equals("5")) {
+            genero = GeneroPelicula.ANIMACION;
+        }
 
-            int duracion = Integer.parseInt(duracionTexto);
+        if (genero == null) {
+            JOptionPane.showMessageDialog(null,
+                    "El género seleccionado no es válido.");
+            return;
+        }
 
-            String clasificacionTexto = JOptionPane.showInputDialog(
-                    "Clasificación:"
-                            + "\n1. Todos"
-                            + "\n2. Mayores de 7"
-                            + "\n3. Mayores de 12"
-                            + "\n4. Mayores de 15"
-                            + "\n5. Mayores de 18");
+        String duracionTexto = JOptionPane.showInputDialog(
+                "Ingrese la duración en minutos:");
 
-            if (clasificacionTexto == null) {
-                return;
-            }
+        if (duracionTexto == null || duracionTexto.equals("")) {
+            return;
+        }
 
-            ClasificacionEdad clasificacion;
+        int duracion = Integer.parseInt(duracionTexto);
 
-            if (clasificacionTexto.equals("1")) {
-                clasificacion = ClasificacionEdad.TODOS;
-            } else if (clasificacionTexto.equals("2")) {
-                clasificacion = ClasificacionEdad.MAYORES_7;
-            } else if (clasificacionTexto.equals("3")) {
-                clasificacion = ClasificacionEdad.MAYORES_12;
-            } else if (clasificacionTexto.equals("4")) {
-                clasificacion = ClasificacionEdad.MAYORES_15;
-            } else if (clasificacionTexto.equals("5")) {
-                clasificacion = ClasificacionEdad.MAYORES_18;
-            } else {
-                throw new IllegalArgumentException(
-                        "Clasificación no válida.");
-            }
+        if (duracion <= 0) {
+            JOptionPane.showMessageDialog(null,
+                    "La duración debe ser mayor que cero.");
+            return;
+        }
 
-            Pelicula pelicula = new Pelicula(
-                    codigo, nombre, genero, duracion, clasificacion);
+        String clasificacionTexto = JOptionPane.showInputDialog(
+                "Seleccione la clasificación:\n"
+                        + "1. Todos\n"
+                        + "2. Mayores de 12 años\n"
+                        + "3. Mayores de 15 años\n"
+                        + "4. Mayores de 18 años");
 
-            cine.registrarPelicula(pelicula);
+        if (clasificacionTexto == null) {
+            return;
+        }
 
-            JOptionPane.showMessageDialog(
-                    null, "Película registrada correctamente.");
+        ClasificacionEdad clasificacion = null;
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(
-                    null, "La duración debe ser un número entero.");
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        if (clasificacionTexto.equals("1")) {
+            clasificacion = ClasificacionEdad.TODOS;
+        } else if (clasificacionTexto.equals("2")) {
+            clasificacion = ClasificacionEdad.MAYORES_12;
+        } else if (clasificacionTexto.equals("3")) {
+            clasificacion = ClasificacionEdad.MAYORES_15;
+        } else if (clasificacionTexto.equals("4")) {
+            clasificacion = ClasificacionEdad.MAYORES_18;
+        }
+
+        if (clasificacion == null) {
+            JOptionPane.showMessageDialog(null,
+                    "La clasificación no es válida.");
+            return;
+        }
+
+        Pelicula pelicula = new Pelicula(
+                codigo, nombre, genero, duracion, clasificacion);
+
+        cine.registrarPelicula(pelicula);
+
+        if (cine.buscarPelicula(codigo) != null) {
+            JOptionPane.showMessageDialog(null,
+                    "Película registrada correctamente.");
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "La película no quedó registrada.");
         }
     }
 
     public static void registrarCliente(Cine cine) {
-        try {
-            String identificacion = JOptionPane.showInputDialog(
-                    "Identificación del cliente:");
 
-            if (identificacion == null) {
-                return;
-            }
+        String identificacion = JOptionPane.showInputDialog(
+                "Ingrese la identificación del cliente:");
 
-            String nombre = JOptionPane.showInputDialog(
-                    "Nombre del cliente:");
+        if (identificacion == null || identificacion.equals("")) {
+            return;
+        }
 
-            if (nombre == null) {
-                return;
-            }
+        if (cine.buscarCliente(identificacion) != null) {
+            JOptionPane.showMessageDialog(null,
+                    "Ya existe un cliente con esa identificación.");
+            return;
+        }
 
-            String tipoTexto = JOptionPane.showInputDialog(
-                    "Tipo de cliente:"
-                            + "\n1. General"
-                            + "\n2. Estudiante"
-                            + "\n3. Niño"
-                            + "\n4. Adulto mayor");
+        String nombre = JOptionPane.showInputDialog(
+                "Ingrese el nombre del cliente:");
 
-            if (tipoTexto == null) {
-                return;
-            }
+        if (nombre == null || nombre.equals("")) {
+            return;
+        }
 
-            TipoCliente tipo;
+        String tipoTexto = JOptionPane.showInputDialog(
+                "Seleccione el tipo de cliente:\n"
+                        + "1. General\n"
+                        + "2. Estudiante\n"
+                        + "3. Niño\n"
+                        + "4. Adulto mayor");
 
-            if (tipoTexto.equals("1")) {
-                tipo = TipoCliente.GENERAL;
-            } else if (tipoTexto.equals("2")) {
-                tipo = TipoCliente.ESTUDIANTE;
-            } else if (tipoTexto.equals("3")) {
-                tipo = TipoCliente.NINO;
-            } else if (tipoTexto.equals("4")) {
-                tipo = TipoCliente.ADULTO_MAYOR;
-            } else {
-                throw new IllegalArgumentException(
-                        "Tipo de cliente no válido.");
-            }
+        if (tipoTexto == null) {
+            return;
+        }
 
-            Cliente cliente = new Cliente(
-                    identificacion, nombre, tipo);
+        TipoCliente tipoCliente = null;
 
-            cine.registrarCliente(cliente);
+        if (tipoTexto.equals("1")) {
+            tipoCliente = TipoCliente.GENERAL;
+        } else if (tipoTexto.equals("2")) {
+            tipoCliente = TipoCliente.ESTUDIANTE;
+        } else if (tipoTexto.equals("3")) {
+            tipoCliente = TipoCliente.NINO;
+        } else if (tipoTexto.equals("4")) {
+            tipoCliente = TipoCliente.ADULTO_MAYOR;
+        }
 
-            JOptionPane.showMessageDialog(
-                    null, "Cliente registrado correctamente.");
+        if (tipoCliente == null) {
+            JOptionPane.showMessageDialog(null,
+                    "El tipo de cliente no es válido.");
+            return;
+        }
 
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        Cliente cliente = new Cliente(
+                identificacion, nombre, tipoCliente);
+
+        cine.registrarCliente(cliente);
+
+        if (cine.buscarCliente(identificacion) != null) {
+            JOptionPane.showMessageDialog(null,
+                    "Cliente registrado correctamente.\n\n"
+                            + cliente.consultarInformacion());
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "El cliente no quedó registrado.");
         }
     }
 
     public static void programarFuncion(Cine cine) {
-        try {
-            String codigo = JOptionPane.showInputDialog(
-                    "Código de la función:");
 
-            if (codigo == null) {
-                return;
-            }
+        String codigo = JOptionPane.showInputDialog(
+                "Ingrese el código de la función:");
 
-            String codigoPelicula = JOptionPane.showInputDialog(
-                    cine.consultarPeliculas()
-                            + "\nCódigo de la película:");
+        if (codigo == null || codigo.equals("")) {
+            return;
+        }
 
-            if (codigoPelicula == null) {
-                return;
-            }
+        String codigoPelicula = JOptionPane.showInputDialog(
+                cine.consultarPeliculas()
+                        + "\nIngrese el código de la película:");
 
-            Pelicula pelicula = cine.buscarPelicula(codigoPelicula);
+        if (codigoPelicula == null) {
+            return;
+        }
 
-            if (pelicula == null) {
-                throw new IllegalArgumentException(
-                        "No existe esa película.");
-            }
+        Pelicula pelicula = cine.buscarPelicula(codigoPelicula);
 
-            String codigoSala = JOptionPane.showInputDialog(
-                    cine.consultarSalas()
-                            + "\nCódigo de la sala:");
+        if (pelicula == null || !pelicula.estaDisponible()) {
+            JOptionPane.showMessageDialog(null,
+                    "La película no existe o no está disponible.");
+            return;
+        }
 
-            if (codigoSala == null) {
-                return;
-            }
+        String codigoSala = JOptionPane.showInputDialog(
+                cine.consultarSalas()
+                        + "\nIngrese el código de la sala:");
 
-            Sala sala = cine.buscarSala(codigoSala);
+        if (codigoSala == null) {
+            return;
+        }
 
-            if (sala == null) {
-                throw new IllegalArgumentException(
-                        "No existe esa sala.");
-            }
+        Sala sala = cine.buscarSala(codigoSala);
 
-            String fecha = JOptionPane.showInputDialog(
-                    "Fecha (DD/MM/AAAA):");
+        if (sala == null || !sala.estaDisponible()) {
+            JOptionPane.showMessageDialog(null,
+                    "La sala no existe o no está disponible.");
+            return;
+        }
 
-            if (fecha == null) {
-                return;
-            }
+        String fecha = JOptionPane.showInputDialog(
+                "Ingrese la fecha (DD/MM/AAAA):");
 
-            String hora = JOptionPane.showInputDialog(
-                    "Hora (HH:MM):");
+        if (fecha == null || fecha.equals("")) {
+            return;
+        }
 
-            if (hora == null) {
-                return;
-            }
+        String hora = JOptionPane.showInputDialog(
+                "Ingrese la hora (HH:MM):");
 
-            String valorTexto = JOptionPane.showInputDialog(
-                    "Valor base de la función:");
+        if (hora == null || hora.equals("")) {
+            return;
+        }
 
-            if (valorTexto == null) {
-                return;
-            }
+        Funcion funcion = new Funcion(
+                codigo, pelicula, sala, fecha, hora);
 
-            double valorBase = Double.parseDouble(valorTexto);
+        boolean registrada = cine.registrarFuncion(funcion);
 
-            Funcion funcion = new Funcion(
-                    codigo, pelicula, sala, fecha, hora, valorBase);
-
-            cine.registrarFuncion(funcion);
-
-            JOptionPane.showMessageDialog(
-                    null, "Función programada correctamente.");
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(
-                    null, "El valor base debe ser numérico.");
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        if (registrada) {
+            JOptionPane.showMessageDialog(null,
+                    "Función programada correctamente.\n\n"
+                            + funcion.consultarInformacion());
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "No fue posible programar la función.");
         }
     }
 
+    public static void consultarFunciones(Cine cine) {
+
+        JOptionPane.showMessageDialog(null,
+                cine.consultarFunciones());
+    }
+
     public static void venderEntrada(Cine cine) {
-        try {
-            String codigoFuncion = JOptionPane.showInputDialog(
-                    cine.consultarFunciones()
-                            + "\nCódigo de la función:");
 
-            if (codigoFuncion == null) {
-                return;
-            }
+        String codigoFuncion = JOptionPane.showInputDialog(
+                cine.consultarFunciones()
+                        + "\nIngrese el código de la función:");
 
-            Funcion funcion = cine.buscarFuncion(codigoFuncion);
+        if (codigoFuncion == null) {
+            return;
+        }
 
-            if (funcion == null || !funcion.estaProgramada()) {
-                throw new IllegalArgumentException(
-                        "La función no existe o no está programada.");
-            }
+        Funcion funcion = cine.buscarFuncion(codigoFuncion);
 
-            JOptionPane.showMessageDialog(
-                    null,
-                    funcion.consultarAsientos(cine.getServicioVentas()));
+        if (funcion == null || !funcion.estaProgramada()) {
+            JOptionPane.showMessageDialog(null,
+                    "La función no existe o no está programada.");
+            return;
+        }
 
-            String codigoAsiento = JOptionPane.showInputDialog(
-                    "Asiento que desea comprar (ejemplo A1):");
+        if (funcion.contarAsientosDisponibles(
+                cine.getServicioVentas()) == 0) {
+            JOptionPane.showMessageDialog(null,
+                    "La función no tiene asientos disponibles.");
+            return;
+        }
 
-            if (codigoAsiento == null) {
-                return;
-            }
+        String identificacion = JOptionPane.showInputDialog(
+                "Ingrese la identificación del cliente:");
 
-            Asiento asiento = funcion.buscarAsiento(codigoAsiento);
+        if (identificacion == null) {
+            return;
+        }
 
-            if (asiento == null) {
-                throw new IllegalArgumentException(
-                        "El asiento no existe.");
-            }
+        Cliente cliente = cine.buscarCliente(identificacion);
 
-            if (!cine.getServicioVentas().estaDisponible(funcion, asiento)) {
-                throw new IllegalArgumentException(
-                        "El asiento ya está ocupado en esta función.");
-            }
+        if (cliente == null) {
+            JOptionPane.showMessageDialog(null,
+                    "El cliente no está registrado.");
+            return;
+        }
 
-            String identificacion = JOptionPane.showInputDialog(
-                    "Identificación del cliente:");
+        JOptionPane.showMessageDialog(null,
+                "Asientos de la función:\n\n"
+                        + funcion.consultarAsientos(
+                        cine.getServicioVentas()));
 
-            if (identificacion == null) {
-                return;
-            }
+        String codigoAsiento = JOptionPane.showInputDialog(
+                "Ingrese el código del asiento:");
 
-            Cliente cliente = cine.buscarCliente(identificacion);
+        if (codigoAsiento == null) {
+            return;
+        }
 
-            if (cliente == null) {
-                String nombre = JOptionPane.showInputDialog(
-                        "Cliente nuevo. Escriba su nombre:");
+        Asiento asiento = funcion.buscarAsiento(codigoAsiento);
 
-                if (nombre == null) {
-                    return;
-                }
+        if (asiento == null) {
+            JOptionPane.showMessageDialog(null,
+                    "El asiento no existe en esta función.");
+            return;
+        }
 
-                String tipoTexto = JOptionPane.showInputDialog(
-                        "Tipo de cliente:"
-                                + "\n1. General"
-                                + "\n2. Estudiante"
-                                + "\n3. Niño"
-                                + "\n4. Adulto mayor");
+        if (!cine.getServicioVentas().estaDisponible(
+                funcion, asiento)) {
+            JOptionPane.showMessageDialog(null,
+                    "El asiento ya está ocupado para esta función.");
+            return;
+        }
 
-                if (tipoTexto == null) {
-                    return;
-                }
+        String codigoVenta = JOptionPane.showInputDialog(
+                "Ingrese el código de la venta:");
 
-                TipoCliente tipo;
+        if (codigoVenta == null || codigoVenta.equals("")) {
+            return;
+        }
 
-                if (tipoTexto.equals("1")) {
-                    tipo = TipoCliente.GENERAL;
-                } else if (tipoTexto.equals("2")) {
-                    tipo = TipoCliente.ESTUDIANTE;
-                } else if (tipoTexto.equals("3")) {
-                    tipo = TipoCliente.NINO;
-                } else if (tipoTexto.equals("4")) {
-                    tipo = TipoCliente.ADULTO_MAYOR;
-                } else {
-                    throw new IllegalArgumentException(
-                            "Tipo de cliente no válido.");
-                }
+        Venta venta = new Venta(
+                codigoVenta, cliente, funcion, asiento);
 
-                cliente = new Cliente(identificacion, nombre, tipo);
-                cine.registrarCliente(cliente);
-            }
+        int cantidadAnterior = cine.getServicioVentas()
+                .getListaVentas().size();
 
-            String tipoEntradaTexto = JOptionPane.showInputDialog(
-                    "Tipo de entrada:"
-                            + "\n1. General"
-                            + "\n2. Estudiante"
-                            + "\n3. Niño"
-                            + "\n4. Adulto mayor");
+        cine.getServicioVentas().registrarVenta(venta);
 
-            if (tipoEntradaTexto == null) {
-                return;
-            }
+        int cantidadActual = cine.getServicioVentas()
+                .getListaVentas().size();
 
-            TipoEntrada tipoEntrada;
-
-            if (tipoEntradaTexto.equals("1")) {
-                tipoEntrada = TipoEntrada.GENERAL;
-            } else if (tipoEntradaTexto.equals("2")) {
-                tipoEntrada = TipoEntrada.ESTUDIANTE;
-            } else if (tipoEntradaTexto.equals("3")) {
-                tipoEntrada = TipoEntrada.NINO;
-            } else if (tipoEntradaTexto.equals("4")) {
-                tipoEntrada = TipoEntrada.ADULTO_MAYOR;
-            } else {
-                throw new IllegalArgumentException(
-                        "Tipo de entrada no válido.");
-            }
-
-            String codigoVenta = JOptionPane.showInputDialog(
-                    "Código de la venta:");
-
-            if (codigoVenta == null) {
-                return;
-            }
-
-            Venta venta = new Venta(
-                    codigoVenta, cliente, funcion, asiento, tipoEntrada);
-
-            cine.getServicioVentas().registrarVenta(venta);
-
-            JOptionPane.showMessageDialog(
-                    null, venta.generarInformacionVenta());
-
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        if (cantidadActual > cantidadAnterior) {
+            JOptionPane.showMessageDialog(null,
+                    "Venta registrada correctamente.\n\n"
+                            + venta.generarInformacionVenta());
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "No fue posible registrar la venta.");
         }
     }
 
     public static void cancelarVenta(Cine cine) {
-        try {
-            String codigo = JOptionPane.showInputDialog(
-                    cine.getServicioVentas().consultarVentasActivas()
-                            + "\nCódigo de la venta que desea cancelar:");
 
-            if (codigo == null) {
-                return;
-            }
+        String codigo = JOptionPane.showInputDialog(
+                "Ingrese el código de la venta que desea cancelar:");
 
-            cine.getServicioVentas().cancelarVenta(codigo);
-
-            JOptionPane.showMessageDialog(
-                    null, "Venta cancelada correctamente.");
-
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+        if (codigo == null) {
+            return;
         }
+
+        Venta venta = cine.buscarVenta(codigo);
+
+        if (venta == null) {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró la venta.");
+            return;
+        }
+
+        if (!venta.estaActiva()) {
+            JOptionPane.showMessageDialog(null,
+                    "La venta ya está cancelada.");
+            return;
+        }
+
+        cine.getServicioVentas().cancelarVenta(codigo);
+
+        JOptionPane.showMessageDialog(null,
+                "Venta cancelada correctamente.");
     }
 
     public static void consultarDisponibilidad(
@@ -461,43 +477,133 @@ public class Main {
 
         String codigo = JOptionPane.showInputDialog(
                 cine.consultarFunciones()
-                        + "\nCódigo de la función:");
+                        + "\nIngrese el código de la función:");
 
         if (codigo == null) {
             return;
         }
 
-        JOptionPane.showMessageDialog(
-                null, reportes.consultarDisponibilidadFuncion(codigo));
+        JOptionPane.showMessageDialog(null,
+                reportes.consultarDisponibilidadFuncion(codigo));
     }
 
-    public static void consultarReportes(ServiciosReportes reportes) {
+    public static void consultarReportes(
+            ServiciosReportes reportes) {
+
         String opcion = JOptionPane.showInputDialog(
-                "REPORTES CINEMAUQ"
-                        + "\n1. Ocupación"
-                        + "\n2. Ingresos"
-                        + "\n3. Todas las ventas"
-                        + "\n4. Ventas activas");
+                "REPORTES\n\n"
+                        + "1. Consultar todas las ventas\n"
+                        + "2. Consultar ventas activas\n"
+                        + "3. Consultar ocupación\n"
+                        + "4. Consultar ingresos");
 
         if (opcion == null) {
             return;
         }
 
+        String informacion = "";
+
         if (opcion.equals("1")) {
-            JOptionPane.showMessageDialog(
-                    null, reportes.consultarOcupacion());
+            informacion = reportes.consultarVentas();
         } else if (opcion.equals("2")) {
-            JOptionPane.showMessageDialog(
-                    null, reportes.consultarIngresos());
+            informacion = reportes.consultarVentasActivas();
         } else if (opcion.equals("3")) {
-            JOptionPane.showMessageDialog(
-                    null, reportes.consultarVentas());
+            informacion = reportes.consultarOcupacion();
         } else if (opcion.equals("4")) {
-            JOptionPane.showMessageDialog(
-                    null, reportes.consultarVentasActivas());
+            informacion = reportes.consultarIngresos();
         } else {
-            JOptionPane.showMessageDialog(
-                    null, "Seleccione una opción válida.");
+            informacion = "Opción no válida.";
         }
+
+        JOptionPane.showMessageDialog(null, informacion);
+    }
+
+    public static void modificarFuncion(Cine cine) {
+
+        String codigo = JOptionPane.showInputDialog(
+                cine.consultarFunciones()
+                        + "\nIngrese el código de la función:");
+
+        if (codigo == null) {
+            return;
+        }
+
+        Funcion funcion = cine.buscarFuncion(codigo);
+
+        if (funcion == null || !funcion.estaProgramada()) {
+            JOptionPane.showMessageDialog(null,
+                    "La función no existe o no está programada.");
+            return;
+        }
+
+        String fecha = JOptionPane.showInputDialog(
+                "Fecha actual: " + funcion.getFecha()
+                        + "\nIngrese la nueva fecha (DD/MM/AAAA):");
+
+        if (fecha == null || fecha.equals("")) {
+            return;
+        }
+
+        String hora = JOptionPane.showInputDialog(
+                "Hora actual: " + funcion.getHora()
+                        + "\nIngrese la nueva hora (HH:MM):");
+
+        if (hora == null || hora.equals("")) {
+            return;
+        }
+
+        funcion.setFecha(fecha);
+        funcion.setHora(hora);
+
+        JOptionPane.showMessageDialog(null,
+                "Función modificada.\n\n"
+                        + funcion.consultarInformacion());
+    }
+
+    public static void cancelarFuncion(Cine cine) {
+
+        String codigo = JOptionPane.showInputDialog(
+                cine.consultarFunciones()
+                        + "\nIngrese el código de la función que desea cancelar:");
+
+        if (codigo == null) {
+            return;
+        }
+
+        Funcion funcion = cine.buscarFuncion(codigo);
+
+        if (funcion == null) {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró la función.");
+            return;
+        }
+
+        if (!funcion.estaProgramada()) {
+            JOptionPane.showMessageDialog(null,
+                    "La función no está programada.");
+            return;
+        }
+
+        boolean tieneVentasActivas = false;
+
+        for (Venta venta : cine.getServicioVentas().getListaVentas()) {
+            if (venta.estaActiva()
+                    && venta.getFuncion().getCodigo()
+                    .equalsIgnoreCase(funcion.getCodigo())) {
+                tieneVentasActivas = true;
+            }
+        }
+
+        if (tieneVentasActivas) {
+            JOptionPane.showMessageDialog(null,
+                    "No se puede cancelar la función porque tiene ventas activas.\n"
+                            + "Primero debes cancelar esas ventas.");
+            return;
+        }
+
+        funcion.cancelarFuncion();
+
+        JOptionPane.showMessageDialog(null,
+                "Función cancelada correctamente.");
     }
 }
